@@ -1,0 +1,21 @@
+name: build and test
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get code
+        uses: actions/checkout@v4
+      - name: Setup Bazel environment
+        uses: bazel-contrib/setup-bazel@0.15.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+      - name: build and run main
+        run: bazel run src:mainProg
+      - name: build and run google tests
+        run: bazel run test
