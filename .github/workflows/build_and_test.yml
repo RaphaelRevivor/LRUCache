@@ -25,7 +25,7 @@ jobs:
         run: sudo apt-get update & sudo apt-get install -y lcov
       - name: run code coverage and generate HTML report
         run: |
-          bazel coverage //test:all --combined_report=lcov --instrumentation_filter=//... --test_output=errors
+          bazel coverage //test:all --combined_report=lcov --instrumentation_filter==".*LRUCache.*\\.(h|hpp|cpp|cc|tpp)$" --test_output=errors
           cp bazel-out/_coverage/_coverage_report.dat cov.info
           genhtml cov.info -o cov_report
       - name: upload cov report as artifact
