@@ -29,7 +29,7 @@ jobs:
           cp bazel-out/_coverage/_coverage_report.dat cov.info
           genhtml cov.info -o cov_report
       - name: upload cov report as artifact
-        uses: action/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: cov-report
           path: cov_report
