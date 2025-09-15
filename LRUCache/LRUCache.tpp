@@ -64,6 +64,7 @@ size_t LRUCache<KeyType, ValueType>::size()
   return cacheList.size();
 }
 
+// function to compress the contents of the list into a vector of key:value pair
 template<typename KeyType, typename ValueType>
 vector<pair<KeyType, ValueType>> LRUCache<KeyType, ValueType>::entries()
 {
@@ -74,6 +75,13 @@ vector<pair<KeyType, ValueType>> LRUCache<KeyType, ValueType>::entries()
   }
 
   return output;
+}
+
+// function to check if empty
+template<typename KeyType, typename ValueType>
+bool LRUCache<KeyType, ValueType>::empty()
+{
+  return cacheList.empty();
 }
 
 #endif

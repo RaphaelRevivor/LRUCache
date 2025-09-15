@@ -28,6 +28,12 @@ TEST_F(LRUCacheTest, BasicAssetion)
   EXPECT_EQ(4, 2*2);
 }
 
+TEST_F(LRUCacheTest, SizeAndEmpty1)
+{
+  EXPECT_EQ(cachePtr->size(), 0);
+  EXPECT_TRUE(cachePtr->empty());
+}
+
 TEST_F(LRUCacheTest, PutNonExist)
 {
   cachePtr->put(1, "abc");
@@ -56,3 +62,8 @@ TEST_F(LRUCacheTest, Get)
   printCache(*cachePtr);
 }
 
+TEST_F(LRUCacheTest, SizeAndEmpty2)
+{
+  EXPECT_EQ(cachePtr->size(), 4);
+  EXPECT_FALSE(cachePtr->empty());
+}

@@ -25,6 +25,7 @@ public:
   void put(const KeyType& key, const ValueType& value);
   size_t size();
   vector<pair<KeyType, ValueType>> entries();
+  bool empty();
 
 private:
   struct CacheBlock{

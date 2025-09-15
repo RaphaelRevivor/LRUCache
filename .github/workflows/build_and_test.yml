@@ -2,9 +2,11 @@ name: build and test
 on:
   push:
     branches:
-      - main
+      - dev
+  pull_request:
+    types: [opened, reopened]
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
       - name: get code
@@ -19,3 +21,15 @@ jobs:
         run: bazel run src:mainProg
       - name: build and run google tests
         run: bazel run test
+      - name: install lcov
+        run: sudo apt-get update & sudo apt-get install -y lcov
+      - name: run code coverage and generate HTML report
+        run: |
+          bazel coverage //test:all --combined_report=lcov --instrumentation_filter=//LRUCache --test_output=errors
+          cp bazel-out/_coverage/_coverage_report.dat cov.info
+          genhtml cov.info -o cov_report
+      - name: upload cov report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cov-report
+          path: cov_report
