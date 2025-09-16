@@ -1,10 +1,6 @@
 #ifndef LRU_CACHE_TPP
 #define LRU_CACHE_TPP
 
-// extern struct CacheBlock;
-// using listIter
-// using constListIter
-
 template<typename KeyType, typename ValueType>
 LRUCache<KeyType, ValueType>::LRUCache(size_t capacity) : capacity(capacity)
 {
@@ -53,14 +49,6 @@ void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& valu
     iterHashMap[key] = cacheList.begin();
   }
 }
-
-// struct CacheBlock{
-//   KeyType key;
-//   ValueType value;
-// };
-
-// using listIter = typename list<CacheBlock>::iterator;
-// using constListIter = typename list<CacheBlock>::const_iterator;
 
 // private function to move a certain CacheBlock to the front
 template<typename KeyType, typename ValueType>
