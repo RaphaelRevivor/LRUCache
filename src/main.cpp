@@ -7,18 +7,18 @@ int main()
   cache.put(2, "cde");
   cache.put(3, "def");
   cache.put(4, "efg");
-  printCache(cache);
+  printCacheEntries(cache);
 
   cache.put(5, "fgh");
-  printCache(cache);
+  printCacheEntries(cache);
 
   cache.put(3, "d");
-  printCache(cache);
+  printCacheEntries(cache);
 
   string output = "";
   cache.get(2, output);
   cout << "2's value: " << output << endl;
-  printCache(cache);
+  printCacheEntries(cache);
 
   return 0;
 }

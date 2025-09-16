@@ -24,19 +24,26 @@ public:
   bool get(const KeyType& key, ValueType& value);
   void put(const KeyType& key, const ValueType& value);
   size_t size();
-  vector<pair<KeyType, ValueType>> entries();
+  vector<pair<KeyType, ValueType>> entries() const;
   bool empty();
 
-private:
   struct CacheBlock{
     KeyType key;
     ValueType value;
   };
 
-  using ListIter = typename list<CacheBlock>::iterator;
+  using iterator = typename list<CacheBlock>::iterator;
+  using const_iterator = typename list<CacheBlock>::const_iterator;
 
+  iterator begin();
+  const_iterator begin() const;
+
+  iterator end();
+  const_iterator end() const;
+
+private:
   // here it stores the iterator pointing to the real CacheBlock in the list
-  unordered_map<KeyType, ListIter> iterHashMap;
+  unordered_map<KeyType, iterator> iterHashMap;
   // here list stores the real CacheBlock
   list<CacheBlock> cacheList;
 

@@ -15,7 +15,7 @@ A lightweight, **generic** Least Recently Used (LRU) cache implementation in C++
 * **Automatic eviction** — when capacity is reached, least recently used entries are removed.
 * **Efficient** — operations run in O(1) time.
 * **Easy integration** — header-only design (`.h` + `.tpp`) makes it simple to reuse in other projects.
-* **Debugging helpers** — includes `printCache()` utility.
+* **Debugging helpers** — includes `printCacheEntries()` utility.
 
 ---
 

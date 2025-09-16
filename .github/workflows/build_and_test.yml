@@ -2,7 +2,7 @@ name: build and test
 on:
   push:
     branches:
-      - dev
+      - dev_9.16
   pull_request:
     types: [opened, reopened]
 jobs:
@@ -21,8 +21,12 @@ jobs:
         run: bazel run src:mainProg
       - name: build and run google tests
         run: bazel run test
-      - name: install lcov
-        run: sudo apt-get update & sudo apt-get install -y lcov
+      - name: install lcov with minimal requirements
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends lcov
+          sudo apt-get remove -y man-db needrestart
+          sudo rm -rf /var/lib/apt/lists/*
       - name: run code coverage and generate HTML report
         run: |
           bazel coverage //test:all --combined_report=lcov --instrumentation_filter=//LRUCache --test_output=errors
