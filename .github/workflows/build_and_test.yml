@@ -2,7 +2,7 @@ name: build and test
 on:
   push:
     branches:
-      - dev_9.16
+      - dev_9.17
   pull_request:
     types: [opened, reopened]
 jobs:
