@@ -20,16 +20,19 @@ public:
   ~LRUCache() = default;
 
   size_t capacity;
+  size_t size();
+  void resize(size_t capacity);
+  bool empty();
 
   bool get(const KeyType& key, ValueType& value);
   void put(const KeyType& key, const ValueType& value);
-  size_t size();
+
   vector<pair<KeyType, ValueType>> entries() const;
-  bool empty();
 
   struct CacheBlock{
     KeyType key;
     ValueType value;
+    CacheBlock(KeyType key, ValueType value) : key(key), value(value) {}
   };
 
   using iterator = typename list<CacheBlock>::iterator;
@@ -40,6 +43,7 @@ public:
 
   iterator end();
   const_iterator end() const;
+
 
 private:
   // here it stores the iterator pointing to the real CacheBlock in the list

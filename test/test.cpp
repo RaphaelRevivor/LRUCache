@@ -124,3 +124,21 @@ TEST_F(LRUCacheTest, Iterators)
   cout << oss1.str() << endl;
   cout << oss2.str() << endl;
 }
+
+TEST_F(LRUCacheTest, Resize)
+{
+  cout << "Before shrinking:" << endl;
+  printCache(*cachePtr);
+
+  cout << "After shrinking to size 2:" << endl;
+  cachePtr->resize(2);
+  printCache(*cachePtr);
+  EXPECT_EQ(cachePtr->size(), 2);
+  EXPECT_EQ(cachePtr->entries()[0].first, 4);
+
+  cout << "After expanding to size 3:" << endl;
+  cachePtr->resize(3);
+  cachePtr->put(5, "fgh");
+  printCache(*cachePtr);
+  EXPECT_EQ(cachePtr->entries()[0].first, 5);
+}

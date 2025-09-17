@@ -44,7 +44,7 @@ void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& valu
       iterHashMap.erase(cacheList.back().key);
       cacheList.pop_back();
     }
-    CacheBlock cacheBlock = {key, value};
+    CacheBlock cacheBlock{key, value};
     cacheList.push_front(cacheBlock);
     iterHashMap[key] = cacheList.begin();
   }
@@ -84,13 +84,6 @@ bool LRUCache<KeyType, ValueType>::empty()
   return cacheList.empty();
 }
 
-template<typename KeyType, typename ValueType>
-struct CacheBlock{
-  KeyType key;
-  ValueType value;
-};
-
-
 // function to return begin iterator
 template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::iterator LRUCache<KeyType, ValueType>::begin()
@@ -117,6 +110,23 @@ template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::const_iterator LRUCache<KeyType, ValueType>::end() const
 {
   return cacheList.end();
+}
+
+// function to resize the cache
+template<typename KeyType, typename ValueType>
+void LRUCache<KeyType, ValueType>::resize(size_t n)
+{
+  capacity = n;
+  // no need to change the real size of list (grow lazily) unless shrinking
+  if (cacheList.size() > capacity)
+  {
+    // remove the least recently used key-pairs in both list and hash map
+    for(auto diff = cacheList.size() - capacity; diff > 0; diff--)
+    {
+      iterHashMap.erase(cacheList.back().key);
+      cacheList.pop_back();
+    }
+  }
 }
 
 #endif
