@@ -10,6 +10,8 @@ LRUCache<KeyType, ValueType>::LRUCache(size_t capacity) : capacity(capacity)
 template<typename KeyType, typename ValueType>
 bool LRUCache<KeyType, ValueType>::get(const KeyType& key, ValueType& value)
 {
+  // for LRU cache, get and put are both "write" ops
+  lock_guard<mutex> lock(m);
   auto iter = iterHashMap.find(key);
   if (iter != iterHashMap.end())
   {
@@ -28,6 +30,7 @@ bool LRUCache<KeyType, ValueType>::get(const KeyType& key, ValueType& value)
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& value)
 {
+  lock_guard<mutex> lock(m);
   auto iter = iterHashMap.find(key);
   // found, update the value
   if (iter != iterHashMap.end())
@@ -44,7 +47,7 @@ void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& valu
       iterHashMap.erase(cacheList.back().key);
       cacheList.pop_back();
     }
-    CacheBlock cacheBlock = {key, value};
+    CacheBlock cacheBlock{key, value};
     cacheList.push_front(cacheBlock);
     iterHashMap[key] = cacheList.begin();
   }
@@ -61,6 +64,7 @@ void LRUCache<KeyType, ValueType>::moveToFront(iterator iter)
 template<typename KeyType, typename ValueType>
 size_t LRUCache<KeyType, ValueType>::size()
 {
+  lock_guard<mutex> lock(m);
   return cacheList.size();
 }
 
@@ -68,6 +72,7 @@ size_t LRUCache<KeyType, ValueType>::size()
 template<typename KeyType, typename ValueType>
 vector<pair<KeyType, ValueType>> LRUCache<KeyType, ValueType>::entries() const
 {
+  lock_guard<mutex> lock(m);
   vector<pair<KeyType, ValueType>> output = {};
   for(const auto& item : cacheList)
   {
@@ -81,15 +86,9 @@ vector<pair<KeyType, ValueType>> LRUCache<KeyType, ValueType>::entries() const
 template<typename KeyType, typename ValueType>
 bool LRUCache<KeyType, ValueType>::empty()
 {
+  lock_guard<mutex> lock(m);
   return cacheList.empty();
 }
-
-template<typename KeyType, typename ValueType>
-struct CacheBlock{
-  KeyType key;
-  ValueType value;
-};
-
 
 // function to return begin iterator
 template<typename KeyType, typename ValueType>
@@ -117,6 +116,24 @@ template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::const_iterator LRUCache<KeyType, ValueType>::end() const
 {
   return cacheList.end();
+}
+
+// function to resize the cache
+template<typename KeyType, typename ValueType>
+void LRUCache<KeyType, ValueType>::resize(size_t n)
+{
+  lock_guard<mutex> lock(m);
+  capacity = n;
+  // no need to change the real size of list (grow lazily) unless shrinking
+  if (cacheList.size() > capacity)
+  {
+    // remove the least recently used key-pairs in both list and hash map
+    for(auto diff = cacheList.size() - capacity; diff > 0; diff--)
+    {
+      iterHashMap.erase(cacheList.back().key);
+      cacheList.pop_back();
+    }
+  }
 }
 
 #endif

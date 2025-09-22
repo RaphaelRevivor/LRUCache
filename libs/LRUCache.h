@@ -6,6 +6,7 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+#include <mutex>
 
 using namespace std;
 
@@ -17,37 +18,47 @@ public:
   // for single argument initialization,
   // prevent unintended usage (e.g. implicit conversion)
   explicit LRUCache(size_t capacity);
+  // copy constructor is now allowed due to mutex is not copyable
+  LRUCache& operator=(const LRUCache&) = delete;
+
+  // allow move operations
+  LRUCache(LRUCache&&) = default;
   ~LRUCache() = default;
 
   size_t capacity;
+  size_t size();
+  void resize(size_t capacity);
+  bool empty();
 
   bool get(const KeyType& key, ValueType& value);
   void put(const KeyType& key, const ValueType& value);
-  size_t size();
+
   vector<pair<KeyType, ValueType>> entries() const;
-  bool empty();
 
   struct CacheBlock{
     KeyType key;
     ValueType value;
+    CacheBlock(KeyType key, ValueType value) : key(key), value(value) {}
   };
 
   using iterator = typename list<CacheBlock>::iterator;
   using const_iterator = typename list<CacheBlock>::const_iterator;
-
-  iterator begin();
-  const_iterator begin() const;
-
-  iterator end();
-  const_iterator end() const;
 
 private:
   // here it stores the iterator pointing to the real CacheBlock in the list
   unordered_map<KeyType, iterator> iterHashMap;
   // here list stores the real CacheBlock
   list<CacheBlock> cacheList;
+  mutable mutex m;
 
   void moveToFront(typename list<CacheBlock>::iterator);
+
+  // hidden due to thread-safe
+  iterator begin();
+  const_iterator begin() const;
+
+  iterator end();
+  const_iterator end() const;
 };
 
 #include "LRUCache.tpp"
