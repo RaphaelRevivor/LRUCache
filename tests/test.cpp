@@ -1,15 +1,41 @@
 #include <gtest/gtest.h>
 #include <string>
-#include <sstream>
-
-#include "LRUCache/LRUCache.h"
+#include <thread>
+#include <atomic>
+#include "libs/LRUCache.h"
 #include "utils/print.h"
 
 using namespace std;
 
+const int numThreads = 5;
+const int numOpsPerThread = 10000;
+
 class LRUCacheTest : public ::testing::Test
 {
+public:
+  void putFunc(int threadId, int numOps)
+  {
+    for(int i = 0; i < numOps; i++)
+    {
+      cachePtr->put(threadId * numOpsPerThread + i, to_string(threadId));
+    }
+  }
+
+  void getFunc(int threadId, int numOps)
+  {
+    string value;
+    for(int i = 0; i < numOps; i++)
+    {
+      if(cachePtr->get(threadId * numOpsPerThread + i, value))
+      {
+        if(value != to_string(threadId))
+          errorThread++;
+      }
+    }
+  }
+
 protected:
+  atomic<int> errorThread = 0;
   static void SetUpTestSuite()
   {
     cachePtr = make_shared<LRUCache<int, string>>(4);
@@ -70,75 +96,50 @@ TEST_F(LRUCacheTest, SizeAndEmpty2)
   EXPECT_FALSE(cachePtr->empty());
 }
 
-TEST_F(LRUCacheTest, Iterators)
-{
-  // normal iterators
-  cout << "Using iterators..." << endl;
-  ostringstream oss1;
-  ostringstream oss2;
-  streambuf* oldBuf;
-  {
-    oldBuf = cout.rdbuf(oss1.rdbuf());
-    printCacheEntries(*cachePtr);
-    cout.rdbuf(oldBuf);
-  }
-  {
-    oldBuf = cout.rdbuf(oss2.rdbuf());
-    int i = 0;
-    cout << "The LRU cache contains:" << endl;
-    for(const auto& [k,v] : *cachePtr)
-    {
-      if (i == 0)
-      {
-        EXPECT_EQ(k, 2);
-        EXPECT_EQ(v, "cde");
-      }
-      cout << i << ", " << k << ":" << v << endl;
-      i++;
-    }
-    cout.rdbuf(oldBuf);
-  }
-  EXPECT_EQ(oss1.str(), oss2.str());
-  cout << oss1.str() << endl;
-  cout << oss2.str() << endl;
-  oss1.str("");
-  oss1.clear();
-  oss2.str("");
-  oss2.clear();
-
-  // const iterators
-  cachePtr->put(4, "e");
-  auto cachePtrConst = make_shared<const LRUCache<int, string>>(*cachePtr);
-  cout << "Using const iterators..." << endl;
-  {
-    oldBuf = cout.rdbuf(oss1.rdbuf());
-    printCacheEntries(*cachePtrConst);
-    cout.rdbuf(oldBuf);
-  }
-  {
-    oldBuf = cout.rdbuf(oss2.rdbuf());
-    printCache(*cachePtrConst);
-    cout.rdbuf(oldBuf);
-  }
-  EXPECT_EQ(oss1.str(), oss2.str());
-  cout << oss1.str() << endl;
-  cout << oss2.str() << endl;
-}
-
 TEST_F(LRUCacheTest, Resize)
 {
   cout << "Before shrinking:" << endl;
-  printCache(*cachePtr);
+  printCacheEntries(*cachePtr);
 
   cout << "After shrinking to size 2:" << endl;
   cachePtr->resize(2);
-  printCache(*cachePtr);
+  printCacheEntries(*cachePtr);
   EXPECT_EQ(cachePtr->size(), 2);
-  EXPECT_EQ(cachePtr->entries()[0].first, 4);
+  EXPECT_EQ(cachePtr->entries()[0].first, 2);
 
   cout << "After expanding to size 3:" << endl;
   cachePtr->resize(3);
   cachePtr->put(5, "fgh");
-  printCache(*cachePtr);
+  printCacheEntries(*cachePtr);
   EXPECT_EQ(cachePtr->entries()[0].first, 5);
+}
+
+TEST_F(LRUCacheTest, ThreadSafe)
+{
+  // launch writer and reader threads all together,
+  // see if an issue arrises,
+  // check the final size at the end of the test
+  cachePtr->resize(numThreads * numOpsPerThread + 10);
+  vector<thread> threadVec;
+
+  // put
+  for(int i = 0; i < numThreads; i++)
+  {
+    threadVec.emplace_back(&LRUCacheTest::putFunc, this, i, numOpsPerThread);
+  }
+
+  // get
+  for(int i = 0; i < numThreads; i++)
+  {
+    threadVec.emplace_back(&LRUCacheTest::getFunc, this, i, numOpsPerThread);
+  }
+
+  for(auto& thread : threadVec)
+  {
+    thread.join();
+  }
+
+  EXPECT_EQ(cachePtr->size(), numThreads * numOpsPerThread);
+  cout << "Size of the cache: " << cachePtr->size() << endl;
+  EXPECT_EQ(errorThread, 0);
 }
