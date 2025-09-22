@@ -2,7 +2,7 @@
 #define PRINT_H
 
 #include <iostream>
-#include "LRUCache/LRUCache.h"
+#include "libs/LRUCache.h"
 
 template<typename KeyType, typename ValueType>
 void printCache(LRUCache<KeyType, ValueType> &cache)

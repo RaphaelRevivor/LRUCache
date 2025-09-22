@@ -4,7 +4,7 @@ cc_library(
     "print.h",
   ],
   deps = [
-      "//LRUCache:LRUCache",
+      "//libs:LRUCache",
   ],
   visibility = [
     "//:__subpackages__",

@@ -4,7 +4,7 @@ cc_test(
   deps = [
     "@googletest//:gtest",
     "@googletest//:gtest_main",
-    "//LRUCache",
+    "//libs:LRUCache",
     "//utils:print",
   ],
 )

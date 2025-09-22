@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "LRUCache/LRUCache.h"
+#include "libs/LRUCache.h"
 #include "utils/print.h"
 
 using namespace std;

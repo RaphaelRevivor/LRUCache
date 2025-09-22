@@ -18,14 +18,14 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: build and run main
-        run: bazel run src:mainProg
+        run: bazel run examples:example
       - name: build and run google tests
-        run: bazel run test
+        run: bazel run tests/...
       - name: install lcov
         run: sudo apt-get update & sudo apt-get install -y lcov
       - name: run code coverage and generate HTML report
         run: |
-          bazel coverage //test:all --combined_report=lcov --instrumentation_filter=//LRUCache --test_output=errors
+          bazel coverage //tests:... --combined_report=lcov --instrumentation_filter=//LRUCache --test_output=errors
           cp bazel-out/_coverage/_coverage_report.dat cov.info
           genhtml cov.info -o cov_report
       - name: upload cov report as artifact
