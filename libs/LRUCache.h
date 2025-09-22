@@ -6,6 +6,7 @@
 #include <list>
 #include <unordered_map>
 #include <vector>
+#include <mutex>
 
 using namespace std;
 
@@ -39,6 +40,7 @@ private:
   unordered_map<KeyType, ListIter> iterHashMap;
   // here list stores the real CacheBlock
   list<CacheBlock> cacheList;
+  mutex m;
 
   void moveToFront(typename list<CacheBlock>::iterator);
 };

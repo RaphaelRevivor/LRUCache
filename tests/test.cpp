@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <string>
+#include <thread>
 #include "libs/LRUCache.h"
 #include "utils/print.h"
 
@@ -66,4 +67,23 @@ TEST_F(LRUCacheTest, SizeAndEmpty2)
 {
   EXPECT_EQ(cachePtr->size(), 4);
   EXPECT_FALSE(cachePtr->empty());
+}
+
+const int threadCnt = 5;
+const int threadOpCnt = 10000;
+
+void getFunc(int id, int numOps)
+{
+
+}
+
+void putFunc(int id, int numOps)
+{
+
+}
+
+TEST_F(LRUCacheTest, ThreadSafe)
+{
+
+  vector<thread> threadVec(5);
 }

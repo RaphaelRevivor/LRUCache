@@ -10,6 +10,8 @@ LRUCache<KeyType, ValueType>::LRUCache(size_t capacity) : capacity(capacity)
 template<typename KeyType, typename ValueType>
 bool LRUCache<KeyType, ValueType>::get(const KeyType& key, ValueType& value)
 {
+  // for LRU cache, get and put are both "write" ops
+  lock_guard<mutex> lock(m);
   auto iter = iterHashMap.find(key);
   if (iter != iterHashMap.end())
   {
@@ -28,6 +30,7 @@ bool LRUCache<KeyType, ValueType>::get(const KeyType& key, ValueType& value)
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& value)
 {
+  lock_guard<mutex> lock(m);
   auto iter = iterHashMap.find(key);
   // found, update the value
   if (iter != iterHashMap.end())
