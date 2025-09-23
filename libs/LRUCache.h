@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <vector>
 #include <mutex>
+#include <optional>
+#include <stdexcept>
 
 using namespace std;
 
@@ -17,8 +19,8 @@ class LRUCache
 public:
   // for single argument initialization,
   // prevent unintended usage (e.g. implicit conversion)
-  explicit LRUCache(size_t capacity);
-  // copy constructor is now allowed due to mutex is not copyable
+  explicit LRUCache(ptrdiff_t capacity);
+  // copy constructor is not allowed due to mutex is not copyable
   LRUCache& operator=(const LRUCache&) = delete;
 
   // allow move operations
@@ -27,11 +29,12 @@ public:
 
   size_t capacity;
   size_t size();
-  void resize(size_t capacity);
+  void resize(ptrdiff_t capacity);
   bool empty();
 
-  bool get(const KeyType& key, ValueType& value);
+  optional<ValueType> get(const KeyType& key);
   void put(const KeyType& key, const ValueType& value);
+  void clear();
 
   vector<pair<KeyType, ValueType>> entries() const;
 

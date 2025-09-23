@@ -15,9 +15,9 @@ int main()
   cache.put(3, "d");
   printCacheEntries(cache);
 
-  string output = "";
-  cache.get(2, output);
-  cout << "2's value: " << output << endl;
+  auto output = cache.get(2);
+  if(output)
+    cout << "2's value: " << *output << endl;
   printCacheEntries(cache);
 
   return 0;
