@@ -2,14 +2,20 @@
 #define LRU_CACHE_TPP
 
 template<typename KeyType, typename ValueType>
-LRUCache<KeyType, ValueType>::LRUCache(size_t capacity) : capacity(capacity)
+LRUCache<KeyType, ValueType>::LRUCache(ptrdiff_t newCapacity)
 {
+  // no need for lock, as at construction, the list and maps are not fully built yet
+  if(newCapacity <= 0)
+    throw invalid_argument("Invalid capacity: cannot be 0 or negative!");
+  else
+    capacity = newCapacity;
 }
 
 // This function is used to read the value from the list 
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::clear()
 {
+  lock_guard<mutex> lock(m);
   // both containers' elements will be deleted and size set to 0
   cacheList.clear();
   iterHashMap.clear();
@@ -129,10 +135,15 @@ typename LRUCache<KeyType, ValueType>::const_iterator LRUCache<KeyType, ValueTyp
 
 // function to resize the cache
 template<typename KeyType, typename ValueType>
-void LRUCache<KeyType, ValueType>::resize(size_t n)
+void LRUCache<KeyType, ValueType>::resize(ptrdiff_t n)
 {
   lock_guard<mutex> lock(m);
-  capacity = n;
+
+  if(n <= 0)
+    throw invalid_argument("Invalid capacity: cannot be 0 or negative!");
+  else
+    capacity = n;
+
   // no need to change the real size of list (grow lazily) unless shrinking
   if (cacheList.size() > capacity)
   {

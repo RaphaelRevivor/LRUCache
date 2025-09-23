@@ -53,9 +53,12 @@ protected:
 
 std::shared_ptr<LRUCache<int, std::string>> LRUCacheTest::cachePtr = nullptr;
 
-TEST_F(LRUCacheTest, BasicAssetion)
+TEST_F(LRUCacheTest, Capacity1)
 {
-  EXPECT_EQ(4, 2*2);
+  EXPECT_THROW((cachePtr = make_shared<LRUCache<int, string>>(0)), invalid_argument);
+  
+  cachePtr.reset();
+  cachePtr = make_shared<LRUCache<int, string>>(4);
 }
 
 TEST_F(LRUCacheTest, SizeAndEmpty1)
@@ -67,19 +70,27 @@ TEST_F(LRUCacheTest, SizeAndEmpty1)
 TEST_F(LRUCacheTest, PutNonExist)
 {
   cachePtr->put(1, "abc");
-  cachePtr->put(2, "cde");
-  cachePtr->put(3, "def");
-  cachePtr->put(4, "efg");
+  cachePtr->put(2, "bcd");
+  cachePtr->put(3, "cde");
+  cachePtr->put(4, "def");
   printCacheEntries(*cachePtr);
   EXPECT_EQ(4, cachePtr->size());
 }
 
 TEST_F(LRUCacheTest, PutExisting)
 {
-  cachePtr->put(3, "d");
+  cachePtr->put(3, "c");
   auto entries = cachePtr->entries();
   EXPECT_EQ(entries[0].first, 3);
-  EXPECT_EQ(entries[0].second, "d");
+  EXPECT_EQ(entries[0].second, "c");
+  printCacheEntries(*cachePtr);
+}
+
+TEST_F(LRUCacheTest, PutWithEviction)
+{
+  cachePtr->put(5, "efg");
+  EXPECT_EQ(cachePtr->size(), 4);
+  EXPECT_EQ(cachePtr->get(1), nullopt);
   printCacheEntries(*cachePtr);
 }
 
@@ -98,6 +109,11 @@ TEST_F(LRUCacheTest, SizeAndEmpty2)
   EXPECT_FALSE(cachePtr->empty());
 }
 
+TEST_F(LRUCacheTest, Capacity2)
+{
+  EXPECT_THROW((cachePtr->resize(0)), invalid_argument);
+}
+
 TEST_F(LRUCacheTest, Resize)
 {
   cout << "Before shrinking:" << endl;
@@ -111,9 +127,9 @@ TEST_F(LRUCacheTest, Resize)
 
   cout << "After expanding to size 3:" << endl;
   cachePtr->resize(3);
-  cachePtr->put(5, "fgh");
+  cachePtr->put(6, "fgh");
   printCacheEntries(*cachePtr);
-  EXPECT_EQ(cachePtr->entries()[0].first, 5);
+  EXPECT_EQ(cachePtr->entries()[0].first, 6);
 }
 
 TEST_F(LRUCacheTest, ThreadSafe)

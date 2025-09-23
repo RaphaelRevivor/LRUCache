@@ -18,8 +18,8 @@ class LRUCache
 public:
   // for single argument initialization,
   // prevent unintended usage (e.g. implicit conversion)
-  explicit LRUCache(size_t capacity);
-  // copy constructor is now allowed due to mutex is not copyable
+  explicit LRUCache(ptrdiff_t capacity);
+  // copy constructor is not allowed due to mutex is not copyable
   LRUCache& operator=(const LRUCache&) = delete;
 
   // allow move operations
@@ -28,7 +28,7 @@ public:
 
   size_t capacity;
   size_t size();
-  void resize(size_t capacity);
+  void resize(ptrdiff_t capacity);
   bool empty();
 
   optional<ValueType> get(const KeyType& key);
