@@ -8,6 +8,7 @@
 #include <vector>
 #include <mutex>
 #include <optional>
+#include <stdexcept>
 
 using namespace std;
 
