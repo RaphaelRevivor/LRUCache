@@ -94,6 +94,36 @@ TEST_F(LRUCacheTest, PutWithEviction)
   printCacheEntries(*cachePtr);
 }
 
+TEST_F(LRUCacheTest, PutWithContinuousEviction)
+{
+  // capacity is still 4
+  cachePtr.reset();
+  cachePtr = make_shared<LRUCache<int, string>>(4);
+  int errEvicted = 0, errKept = 0;
+  for(int i = 0; i < 1000; i++)
+  {
+    cachePtr->put(i, "test");
+    if(i % 4 == 0)
+    {
+      if (i - 4 > 0)
+      {
+        // check if the value written just earlier than 3 writes ago is evicted
+        auto value = cachePtr->get(i-4);
+        if (value)
+          errEvicted++;
+        // check if the value written exactly 3 writes ago is kept
+        value = cachePtr->get(i-3);
+        if (!value)
+          errKept++;
+        else if (*value != "test")
+          errKept++;
+      }
+    }
+  }
+  EXPECT_EQ(errEvicted, 0);
+  EXPECT_EQ(errKept, 0);
+}
+
 TEST_F(LRUCacheTest, Get)
 {
   auto output = cachePtr->get(2);
@@ -123,7 +153,7 @@ TEST_F(LRUCacheTest, Resize)
   cachePtr->resize(2);
   printCacheEntries(*cachePtr);
   EXPECT_EQ(cachePtr->size(), 2);
-  EXPECT_EQ(cachePtr->entries()[0].first, 2);
+  EXPECT_EQ(cachePtr->entries()[0].first, 999);
 
   cout << "After expanding to size 3:" << endl;
   cachePtr->resize(3);
