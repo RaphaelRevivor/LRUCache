@@ -2,7 +2,7 @@
 
 int main()
 {
-  LRUCache<int, string> cache(-1);
+  LRUCache<int, string> cache(4);
   cache.put(1, "abc");
   cache.put(2, "cde");
   cache.put(3, "def");
