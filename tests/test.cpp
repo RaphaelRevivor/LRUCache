@@ -23,13 +23,15 @@ public:
 
   void getFunc(int threadId, int numOps)
   {
-    string value;
     for(int i = 0; i < numOps; i++)
     {
-      if(cachePtr->get(threadId * numOpsPerThread + i, value))
+      auto value = cachePtr->get(threadId * numOpsPerThread + i);
+      if(value)
       {
-        if(value != to_string(threadId))
-          errorThread++;
+        if(*value != to_string(threadId))
+        {
+          errorThread++;          
+        }
       }
     }
   }
@@ -83,10 +85,10 @@ TEST_F(LRUCacheTest, PutExisting)
 
 TEST_F(LRUCacheTest, Get)
 {
-  string output = "";
-  cachePtr->get(2, output);
+  auto output = cachePtr->get(2);
   auto entries = cachePtr->entries();
-  EXPECT_EQ(entries[0].second, output);
+  if (output)
+    EXPECT_EQ(entries[0].second, *output);
   printCacheEntries(*cachePtr);
 }
 
@@ -119,6 +121,7 @@ TEST_F(LRUCacheTest, ThreadSafe)
   // launch writer and reader threads all together,
   // see if an issue arrises,
   // check the final size at the end of the test
+  cachePtr->clear();
   cachePtr->resize(numThreads * numOpsPerThread + 10);
   vector<thread> threadVec;
 

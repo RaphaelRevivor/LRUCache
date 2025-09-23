@@ -8,21 +8,30 @@ LRUCache<KeyType, ValueType>::LRUCache(size_t capacity) : capacity(capacity)
 
 // This function is used to read the value from the list 
 template<typename KeyType, typename ValueType>
-bool LRUCache<KeyType, ValueType>::get(const KeyType& key, ValueType& value)
+void LRUCache<KeyType, ValueType>::clear()
+{
+  // both containers' elements will be deleted and size set to 0
+  cacheList.clear();
+  iterHashMap.clear();
+}
+
+// This function is used to read the value from the list 
+template<typename KeyType, typename ValueType>
+optional<ValueType> LRUCache<KeyType, ValueType>::get(const KeyType& key)
 {
   // for LRU cache, get and put are both "write" ops
   lock_guard<mutex> lock(m);
   auto iter = iterHashMap.find(key);
   if (iter != iterHashMap.end())
   {
-    value = iter->second->value;
     // and the got CacheBlock needs to be moved to the beginning of the list
+    auto value = iter->second->value;
     moveToFront(iter->second);
-    return true;
+    return value;
   }
   else
   {
-    return false;
+    return nullopt;
   }
 }
 

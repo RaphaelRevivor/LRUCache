@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 #include <mutex>
+#include <optional>
 
 using namespace std;
 
@@ -30,8 +31,9 @@ public:
   void resize(size_t capacity);
   bool empty();
 
-  bool get(const KeyType& key, ValueType& value);
+  optional<ValueType> get(const KeyType& key);
   void put(const KeyType& key, const ValueType& value);
+  void clear();
 
   vector<pair<KeyType, ValueType>> entries() const;
 
