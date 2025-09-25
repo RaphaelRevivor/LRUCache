@@ -24,9 +24,9 @@ jobs:
       - name: install lcov with minimal requirements
         run: |
           sudo apt-get update -qq
+          echo "set man-db/auto-update false" | debconf-communicate
+          dpkg-reconfigure man-db
           sudo apt-get install -y --no-install-recommends lcov
-          sudo apt-get remove -y man-db needrestart
-          sudo rm -rf /var/lib/apt/lists/*
       - name: run code coverage and generate HTML report
         run: |
           bazel coverage tests/... --combined_report=lcov --instrumentation_filter=//libs --test_output=errors
