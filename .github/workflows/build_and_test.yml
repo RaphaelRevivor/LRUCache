@@ -21,12 +21,13 @@ jobs:
         run: bazel run examples:example
       - name: build and run google tests
         run: bazel run tests/...
-      - name: install lcov with minimal requirements
+      - name: install lcov and doxygen with minimal requirements
         run: |
           sudo apt-get update -qq
           echo "set man-db/auto-update false" | sudo debconf-communicate
           sudo dpkg-reconfigure man-db
           sudo apt-get install -y --no-install-recommends lcov
+          sudo apt-get install -y --no-install-recommends doxygen graphviz
       - name: run code coverage and generate HTML report
         run: |
           bazel coverage tests/... --combined_report=lcov --instrumentation_filter=//libs --test_output=errors
