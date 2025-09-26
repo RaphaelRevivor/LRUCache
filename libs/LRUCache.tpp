@@ -11,7 +11,7 @@ LRUCache<KeyType, ValueType>::LRUCache(ptrdiff_t newCapacity)
     capacity = newCapacity;
 }
 
-// This function is used to read the value from the list 
+/// This function is used to read the value from the list 
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::clear()
 {
@@ -41,7 +41,7 @@ optional<ValueType> LRUCache<KeyType, ValueType>::get(const KeyType& key)
   }
 }
 
-// This function is used to write a key-value pair to the list 
+/// This function is used to write a key-value pair to the list 
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& value)
 {
@@ -68,14 +68,14 @@ void LRUCache<KeyType, ValueType>::put(const KeyType& key, const ValueType& valu
   }
 }
 
-// private function to move a certain CacheBlock to the front
+/// private function to move a certain CacheBlock to the front
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::moveToFront(iterator iter)
 {
   cacheList.splice(cacheList.begin(), cacheList, iter);
 }
 
-// function to return size
+/// function to return size
 template<typename KeyType, typename ValueType>
 size_t LRUCache<KeyType, ValueType>::size()
 {
@@ -83,7 +83,7 @@ size_t LRUCache<KeyType, ValueType>::size()
   return cacheList.size();
 }
 
-// function to compress the contents of the list into a vector of key:value pair
+/// function to compress the contents of the list into a vector of key:value pair
 template<typename KeyType, typename ValueType>
 vector<pair<KeyType, ValueType>> LRUCache<KeyType, ValueType>::entries() const
 {
@@ -97,7 +97,7 @@ vector<pair<KeyType, ValueType>> LRUCache<KeyType, ValueType>::entries() const
   return output;
 }
 
-// function to check if empty
+/// function to check if empty
 template<typename KeyType, typename ValueType>
 bool LRUCache<KeyType, ValueType>::empty()
 {
@@ -105,35 +105,35 @@ bool LRUCache<KeyType, ValueType>::empty()
   return cacheList.empty();
 }
 
-// function to return begin iterator
+/// function to return begin iterator
 template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::iterator LRUCache<KeyType, ValueType>::begin()
 {
   return cacheList.begin();
 }
 
-// function to return const begin iterator
+/// function to return const begin iterator
 template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::const_iterator LRUCache<KeyType, ValueType>::begin() const
 {
   return cacheList.begin();
 }
 
-// function to return end iterator
+/// function to return end iterator
 template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::iterator LRUCache<KeyType, ValueType>::end()
 {
   return cacheList.end();
 }
 
-// function to return const end iterator
+/// function to return const end iterator
 template<typename KeyType, typename ValueType>
 typename LRUCache<KeyType, ValueType>::const_iterator LRUCache<KeyType, ValueType>::end() const
 {
   return cacheList.end();
 }
 
-// function to resize the cache
+/// function to resize the cache
 template<typename KeyType, typename ValueType>
 void LRUCache<KeyType, ValueType>::resize(ptrdiff_t n)
 {
