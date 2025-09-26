@@ -1,6 +1,10 @@
 #ifndef LRU_CACHE_TPP
 #define LRU_CACHE_TPP
 
+#if defined(__GNUC__) || defined(__clang__)
+#  line 1 "libs/LRUCache.tpp"
+#endif
+
 template<typename KeyType, typename ValueType>
 LRUCache<KeyType, ValueType>::LRUCache(ptrdiff_t newCapacity)
 {

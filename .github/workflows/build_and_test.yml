@@ -2,7 +2,7 @@ name: build and test
 on:
   push:
     branches:
-      - dev_doxygen
+      - dev_cov
   pull_request:
     types: [opened, reopened]
 jobs:
