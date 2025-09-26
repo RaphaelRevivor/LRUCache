@@ -2,7 +2,7 @@ name: build and test
 on:
   push:
     branches:
-      - dev_9.24
+      - dev_doxygen
   pull_request:
     types: [opened, reopened]
 jobs:
@@ -37,3 +37,10 @@ jobs:
         with:
           name: cov-report
           path: cov_report
+      - name: use doxygen to generate documentation
+        run: doxygen Doxyfile
+      - name: upload doxygen html folder as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doxygen-documentation
+          path: html
